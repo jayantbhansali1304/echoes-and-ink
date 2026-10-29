@@ -218,7 +218,7 @@ async function ask(queryText) {
     let json = null;
     try { json = JSON.parse(raw); } catch (e) {}
     if (!response.ok || !json || json.error) {
-      throw new Error((json && json.error) || `The server answered with status ${response.status} (the function may have timed out or crashed)`);
+      throw new Error((json && json.error ? json.error + (json.detail ? " — " + json.detail : "") : null) || `The server answered with status ${response.status} (the function may have timed out or crashed)`);
     }
     
     const results = json.data || [];
@@ -234,7 +234,7 @@ async function ask(queryText) {
   } catch (error) {
     if (seq === searchSeq) {
       $("#re").textContent = "Search encountered a problem";
-      $("#rl").innerHTML = `<p class="why">${E(error.message)}. Please check your setup or try again.</p>`;
+      $("#rl").innerHTML = `<p class="why">${E(String(error.message).replace(/[.\s]+$/, ""))}. Please check your setup or try again.</p>`;
     }
   } finally {
     if (seq === searchSeq) {
