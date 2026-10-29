@@ -1,7 +1,10 @@
 // Netlify Function: POST /api/search   body: { query, mode }
 // Environment variables (Netlify > Site settings > Environment variables):
 //   GEMINI_API_KEY  (required)      GEMINI_MODEL  (optional, default below)
-const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+const MODELS = [
+  process.env.GEMINI_MODEL || "gemini-3.5-flash",
+  ...(process.env.GEMINI_FALLBACK_MODELS || "gemini-3.1-flash-lite,gemini-2.5-flash-lite").split(",")
+].map((s) => s.trim()).filter(Boolean).filter((m, i, a) => a.indexOf(m) === i);
 const ENDPOINT = (m) => `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`;
 const BUDGET_MS = 24000; // stop before Netlify's own limit (your log shows 30 s) so the browser gets a clear message, not a platform timeout
 
@@ -20,7 +23,7 @@ function parseJsonArray(text) {
   return JSON.parse(clean.slice(a, b + 1));
 }
 
-async function callGemini({ key, system, query, grounded, signal }) {
+async function callGemini({ key, model, system, query, grounded, signal }) {
   const body = {
     systemInstruction: { parts: [{ text: system }] },
     contents: [{ role: "user", parts: [{ text: query }] }],       // the user's text is never pasted into the system prompt
@@ -29,7 +32,7 @@ async function callGemini({ key, system, query, grounded, signal }) {
   if (grounded) body.tools = [{ google_search: {} }];              // real web search (cannot be combined with responseMimeType JSON)
   else body.generationConfig.responseMimeType = "application/json";
 
-  const res = await fetch(ENDPOINT(MODEL), {
+  const res = await fetch(ENDPOINT(model), {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-goog-api-key": key }, // key in a header, not in the URL
     body: JSON.stringify(body),
@@ -60,31 +63,41 @@ exports.handler = async (event) => {
   if (!key) return json(500, { error: "GEMINI_API_KEY is not set for this site. Add it in Netlify > Site settings > Environment variables, then redeploy." });
 
   const exact = mode === "movie" || mode === "book";
-  const system = systemPrompt(exact);
+    const system = systemPrompt(exact);
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), BUDGET_MS);
   const started = Date.now();
-  let out, grounded = true;
+  let out = null, usedModel = "", grounded = false, lastErr = null, sawQuota = false;
 
   try {
-    try {
-      out = await callGemini({ key, system, query, grounded: true, signal: ctl.signal });
-    } catch (e) {
-      if (e.name === "AbortError" || e.status === 401 || e.status === 403 || e.status === 429) throw e;
-      console.error("Grounded search failed, retrying without web search:", e.message);
-      if (Date.now() - started > BUDGET_MS - 6000) throw e;
-      grounded = false;
-      out = await callGemini({ key, system, query, grounded: false, signal: ctl.signal });
+    outer: for (const model of MODELS) {
+      for (const g of [true, false]) {
+        if (Date.now() - started > BUDGET_MS - 3000) break outer;
+        try {
+          out = await callGemini({ key, model, system, query, grounded: g, signal: ctl.signal });
+          usedModel = model; grounded = g;
+          break outer;
+        } catch (e) {
+          lastErr = e;
+          console.error(`${model} ${g ? "grounded" : "plain"} failed:`, e.message);
+          if (e.name === "AbortError" || e.status === 401 || e.status === 403) break outer;
+          if (e.status === 429) sawQuota = true;
+          if (e.status === 404) break;
+        }
+      }
     }
-  } catch (e) {
-    console.error("Search failed:", e.name, e.message);
-    const timedOut = e.name === "AbortError";
-    return json(timedOut ? 504 : 502, {
-      error: timedOut ? "The search took too long. Please try again, or use a more specific title." : "The search service returned an error.",
-      detail: String(e.message).slice(0, 300)
-    });
   } finally {
     clearTimeout(timer);
+  }
+
+  if (!out) {
+    const s = lastErr && lastErr.status;
+    const timedOut = lastErr && lastErr.name === "AbortError";
+    const error = timedOut ? "The search took too long. Please try again, or use a more specific title."
+      : (s === 401 || s === 403) ? "Google rejected the API key. Check that the key is valid and the Gemini API is enabled for its project."
+      : sawQuota ? "Google says this API key has used up its quota for now. Try again later, or enable billing on the Google project."
+      : "The search service returned an error.";
+    return json(timedOut ? 504 : sawQuota ? 429 : 502, { error, detail: String(lastErr ? lastErr.message : "no attempt made").slice(0, 300) });
   }
 
   let items;
@@ -112,5 +125,5 @@ exports.handler = async (event) => {
       };
     });
 
-  return json(200, { data: results, grounded, model: MODEL });
+  return json(200, { data: results, grounded, model: usedModel });
 };
