@@ -1,0 +1,8 @@
+{
+  "name": "echoes-and-ink",
+  "version": "1.0.0",
+  "description": "The Midnight Library",
+  "scripts": {
+    "start": "netlify dev"
+  }
+}

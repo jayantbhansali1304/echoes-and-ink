@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Echoes &amp; Ink — The Midnight Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B090E;--bg2:#15101C;--ink:#F3EBDD;--mut:#A99F91;--gold:#D9B26F;--gold2:#8F6B2E;
+  --card:rgba(255,255,255,.045);--line:rgba(217,178,111,.25);--pb:#F4ECDC;--pi:#1B1620;--pg:#8F6B2E;
+  --dust:230,195,120;--glow:rgba(217,178,111,.16);--hi:#F6E3B4;--rayo:0;
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Jost',system-ui,sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark
+}
+@media(prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#F7F1E5;--bg2:#EDE3D0;--ink:#1B1620;--mut:#6B6256;--gold:#8F6420;--gold2:#6E4C17;
+    --card:rgba(0,0,0,.035);--line:rgba(110,76,23,.28);--pb:#15101C;--pi:#F3EBDD;--pg:#D9B26F;
+    --dust:150,96,34;--glow:rgba(201,125,50,.24);--hi:#C98B2B;--rayo:1;color-scheme:light
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F7F1E5;--bg2:#EDE3D0;--ink:#1B1620;--mut:#6B6256;--gold:#8F6420;--gold2:#6E4C17;
+  --card:rgba(0,0,0,.035);--line:rgba(110,76,23,.28);--pb:#15101C;--pi:#F3EBDD;--pg:#D9B26F;
+  --dust:150,96,34;--glow:rgba(201,125,50,.24);--hi:#C98B2B;--rayo:1;color-scheme:light
+}
+:root[data-theme="dark"]{
+  --dust:230,195,120;--glow:rgba(217,178,111,.16);--hi:#F6E3B4;--rayo:0;color-scheme:dark
+}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.6;transition:background .6s,color .6s;overflow-x:hidden}
+h1,h2,h3,blockquote{font-family:var(--serif);font-weight:400;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+.eyebrow{font-size:.72rem;letter-spacing:.38em;text-transform:uppercase;color:var(--gold)}
+.gold{background:linear-gradient(100deg,var(--gold2),var(--gold) 35%,var(--hi) 50%,var(--gold) 65%,var(--gold2));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 7s linear infinite}
+@keyframes sh{to{background-position:-220% 0}}
+nav{position:absolute;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:22px clamp(18px,5vw,64px);gap:12px}
+.logo{font-family:var(--serif);font-size:1.7rem;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.logo span{display:flex;flex-direction:column;line-height:1}
+.logo b{font-weight:500;font-size:1.7rem;letter-spacing:.01em}
+.logo em{font-style:italic;color:var(--gold);padding:0 .08em}
+.logo small{font-family:var(--sans);font-size:.52rem;letter-spacing:.44em;text-transform:uppercase;color:var(--mut);margin-top:6px}
+.nl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pill{border:1px solid var(--line);background:var(--card);padding:9px 16px;border-radius:99px;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;transition:.3s;display:inline-flex;align-items:center;gap:6px}
+.pill:hover{border-color:var(--gold);color:var(--gold)}
+.pill.live-dot::before{content:"";width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;display:inline-block}
+.hero{position:relative;min-height:100svh;display:grid;place-items:center;text-align:center;padding:130px clamp(18px,5vw,64px) 80px;overflow:hidden;background:radial-gradient(ellipse at 50% 0%,var(--bg2),transparent 70%)}
+.hc{position:relative;z-index:2;max-width:980px;width:100%}
+h1{font-size:clamp(2.8rem,8.4vw,6.6rem);line-height:.98;letter-spacing:-.02em;margin:20px 0 26px}
+h1 em{font-style:italic}
+.sub{max-width:650px;margin:0 auto 30px;color:var(--mut);font-size:1.08rem}
+.mode-bar{display:inline-flex;gap:6px;padding:5px;border-radius:99px;border:1px solid var(--line);background:var(--card);margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+.mode-btn{border:0;background:transparent;padding:7px 16px;border-radius:99px;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);transition:.25s}
+.mode-btn.on{background:var(--gold);color:#1B1208;font-weight:500}
+.ask{display:flex;gap:8px;max-width:740px;margin:0 auto;padding:7px;border:1px solid var(--gold);border-radius:99px;background:var(--card);backdrop-filter:blur(14px);box-shadow:0 0 60px rgba(217,178,111,.12)}
+.ask input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--ink);font:inherit;font-size:1.02rem;padding:0 20px}
+.ask input::placeholder{color:var(--mut)}
+.go{background:linear-gradient(135deg,#F0D595,var(--gold) 55%,var(--gold2));color:#1B1208;border:0;border-radius:99px;padding:14px 28px;font-weight:500;letter-spacing:.06em;white-space:nowrap;transition:filter .2s,transform .2s}
+.go:hover{filter:brightness(1.1)}
+.go:disabled{opacity:.6;cursor:not-allowed}
+section{padding:clamp(64px,10vw,130px) clamp(18px,5vw,64px);position:relative}
+.wrap{max-width:1180px;margin:0 auto}
+h2{font-size:clamp(2.2rem,5vw,4rem);line-height:1.05;margin:14px 0 18px}
+#res{display:none;background:var(--bg2);border-block:1px solid var(--line)}
+.res-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:14px}
+.rc{display:grid;grid-template-columns:auto 1fr;gap:clamp(16px,4vw,48px);padding:38px 0;border-top:1px solid var(--line)}
+.rn{font-family:var(--serif);font-size:clamp(3rem,7vw,5.5rem);line-height:.8;color:var(--gold);opacity:.55;font-style:italic}
+.rc blockquote{font-size:clamp(1.5rem,3vw,2.3rem);line-height:1.25}
+.by{margin-top:16px;font-size:.9rem;letter-spacing:.06em;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.by b{font-weight:500;color:var(--gold)}
+.by span{color:var(--mut);font-style:italic;font-family:var(--serif);font-size:1.05rem}
+.src-badge{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;padding:3px 10px;border-radius:99px;border:1px solid var(--line);color:var(--gold);text-decoration:none}
+.src-badge:hover{background:var(--gold);color:#1B1208}
+.why{margin-top:10px;color:var(--mut);font-size:.92rem;max-width:680px}
+.act{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.act .pill{padding:7px 14px;font-size:.7rem}
+.act .on{background:var(--gold);color:#1B1208;border-color:var(--gold)}
+.dr{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--bg2);border-left:1px solid var(--gold);z-index:90;transform:translateX(105%);transition:transform .6s cubic-bezier(.16,1,.3,1);padding:calc(26px + env(safe-area-inset-top,0px)) 26px calc(26px + env(safe-area-inset-bottom,0px));overflow-y:auto}
+.dr.o{transform:none}.dr h3{font-size:2rem}.dr .sv{border-top:1px solid var(--line);padding:18px 0;font-family:var(--serif);font-size:1.25rem}.dr .sv small{display:block;font-family:var(--sans);color:var(--gold);margin-top:6px;font-size:.78rem}
+.dr .sv button{background:none;border:0;color:var(--mut);font-size:.75rem;margin-left:10px;text-decoration:underline}
+footer{padding:60px 20px calc(60px + env(safe-area-inset-bottom,0px));text-align:center;color:var(--mut);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;border-top:1px solid var(--line)}
+.loader{display:flex;align-items:center;gap:14px;padding:28px 0;color:var(--gold);font-family:var(--serif);font-size:1.5rem;font-style:italic}
+.spin{width:22px;height:22px;border:2px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="#">
+    <span><b>Echoes <em>&amp;</em> Ink</b><small>The Midnight Library</small></span>
+  </a>
+  <div class="nl">
+    <span class="pill live-dot" title="Connected to Secure Backend">Web Search: Secure</span>
+    <button class="pill" id="cb">Commonplace · <span id="cn">0</span></button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hc">
+    <div class="eyebrow">The Midnight Library · Live Cinematic Dialogues &amp; Literary Search</div>
+    <h1>Every unspoken <em class="gold">thought</em> already lives inside a <em>great story.</em></h1>
+    <p class="sub">Whisper a feeling, or name any book, author, film or series. We’ll securely surface the exact spoken dialogue and text.</p>
+
+    <div class="mode-bar" id="modeBar">
+      <button type="button" class="mode-btn on" data-m="auto">✦ Smart Search</button>
+      <button type="button" class="mode-btn" data-m="thought">Thought → Quote</button>
+      <button type="button" class="mode-btn" data-m="book">Book / Author</button>
+      <button type="button" class="mode-btn" data-m="movie">Movie / Series</button>
+    </div>
+
+    <form class="ask" id="f">
+      <input id="q" placeholder="Search any thought, book, or movie dialogue..." aria-label="Your thought, book or movie" autocomplete="off">
+      <button class="go" id="goBtn" type="submit">Seek echoes</button>
+    </form>
+  </div>
+</header>
+
+<section id="res">
+  <div class="wrap">
+    <div class="res-head">
+      <div>
+        <div class="eyebrow" id="re">Echoes found across the web</div>
+        <h2 id="rt"></h2>
+      </div>
+      <div><button class="pill" id="closeResBtn">✕ Close</button></div>
+    </div>
+    <div id="rl"></div>
+  </div>
+</section>
+
+<footer>Echoes &amp; Ink · Secure Deployment Edition</footer>
+
+<!-- COMMONPLACE BOOK DRAWER -->
+<aside class="dr" id="dr">
+  <button class="pill" id="dc" style="float:right">Close</button>
+  <div class="eyebrow">Your</div>
+  <h3>Commonplace <em class="gold">Book</em></h3>
+  <div id="dl"></div>
+</aside>
+
+<script>
+const $ = s => document.querySelector(s);
+const E = s => String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let currentMode = "auto";
+$("#modeBar").addEventListener("click", e => {
+  const btn = e.target.closest("[data-m]");
+  if (!btn) return;
+  currentMode = btn.dataset.m;
+  document.querySelectorAll(".mode-btn").forEach(b => b.classList.toggle("on", b === btn));
+});
+
+let savedItems = [];
+try { savedItems = JSON.parse(localStorage.getItem("ei_v4") || "[]"); } catch(e) {}
+const saveStore = () => {
+  try { localStorage.setItem("ei_v4", JSON.stringify(savedItems)); } catch(e) {}
+  $("#cn").textContent = savedItems.length;
+};
+saveStore();
+
+function renderQuoteCard(item, n) {
+  const on = savedItems.some(x => x.quote === item.quote);
+  const badge = item.sourceUrl
+    ? `<a class="src-badge" href="${E(item.sourceUrl)}" target="_blank" rel="noopener noreferrer">↗ ${E(item.provenance === 'SOURCE_IDENTIFIED' ? 'Verified Source' : 'Web Source')}</a>`
+    : `<span class="src-badge">${E(item.provenance)}</span>`;
+    
+  return `<div class="rc">
+    <div class="rn">${String(n).padStart(2, "0")}</div>
+    <div>
+      <blockquote>“${E(item.quote)}”</blockquote>
+      <div class="by">
+        <b>${E(item.author)}</b> · <span>${E(item.work)}</span> ${badge}
+      </div>
+      ${item.why ? `<div class="why">${E(item.why)}</div>` : ""}
+      <div class="act">
+        <button class="pill copy-btn" data-q="${E(item.quote)}" data-a="${E(item.author)}" data-w="${E(item.work)}">Copy</button>
+        <button class="pill save-btn ${on ? "on" : ""}" data-json="${E(JSON.stringify(item))}">${on ? "Saved ✓" : "Save"}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+let searchSeq = 0;
+async function ask(queryText) {
+  const t = (queryText || "").trim();
+  if (!t) return;
+  
+  const seq = ++searchSeq;
+  $("#q").value = t;
+  $("#res").style.display = "block";
+  $("#re").textContent = "Searching the archives…";
+  $("#rt").textContent = `Seeking echoes for “${t}”`;
+  $("#rl").innerHTML = `<div class="loader"><div class="spin"></div><span>Contacting secure backend…</span></div>`;
+  $("#goBtn").textContent = "Seeking…";
+  $("#goBtn").disabled = true;
+  $("#res").scrollIntoView({ behavior: "smooth" });
+
+  try {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 28000);
+    let response;
+    try {
+      response = await fetch("/api/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: t, mode: currentMode }),
+        signal: ctl.signal
+      });
+    } catch (e) {
+      throw new Error(e.name === "AbortError" ? "The search took too long" : "Could not reach the search service");
+    } finally { clearTimeout(timer); }
+
+    // Read the body as text first: a platform timeout returns HTML, not JSON.
+    const raw = await response.text();
+    let json = null;
+    try { json = JSON.parse(raw); } catch (e) {}
+    if (!response.ok || !json || json.error) {
+      throw new Error((json && json.error) || `The server answered with status ${response.status} (the function may have timed out or crashed)`);
+    }
+    
+    const results = json.data || [];
+    if (seq !== searchSeq) return;
+
+    if (results.length === 0) {
+      $("#rl").innerHTML = `<p class="why">No verified matching quotations were returned.</p>`;
+    } else {
+      $("#re").textContent = `${results.length} passages retrieved securely`;
+      $("#rl").innerHTML = results.map((item, idx) => renderQuoteCard(item, idx + 1)).join("")
+        + (json.grounded === false ? `<p class="why">⚠ Live web search was unavailable, so these come from the AI’s memory. Check them before you share them.</p>` : "");
+    }
+  } catch (error) {
+    if (seq === searchSeq) {
+      $("#re").textContent = "Search encountered a problem";
+      $("#rl").innerHTML = `<p class="why">${E(error.message)}. Please check your setup or try again.</p>`;
+    }
+  } finally {
+    if (seq === searchSeq) {
+      $("#goBtn").textContent = "Seek echoes";
+      $("#goBtn").disabled = false;
+    }
+  }
+}
+
+$("#f").addEventListener("submit", e => {
+  e.preventDefault();
+  ask($("#q").value);
+});
+
+$("#closeResBtn").addEventListener("click", () => { $("#res").style.display = "none"; });
+
+// Handle Copy and Save
+$("#rl").addEventListener("click", e => {
+  if (e.target.classList.contains("copy-btn")) {
+    const { q, a, w } = e.target.dataset;
+    navigator.clipboard.writeText(`“${q}” — ${a}, ${w}`).catch(()=>{});
+    e.target.textContent = "Copied ✓";
+    setTimeout(() => { e.target.textContent = "Copy"; }, 2000);
+  }
+  
+  if (e.target.classList.contains("save-btn")) {
+    const item = JSON.parse(e.target.dataset.json);
+    if (savedItems.some(x => x.quote === item.quote)) {
+      savedItems = savedItems.filter(x => x.quote !== item.quote);
+    } else {
+      savedItems.unshift(item);
+    }
+    saveStore();
+    const isNowSaved = savedItems.some(x => x.quote === item.quote);
+    e.target.classList.toggle("on", isNowSaved);
+    e.target.textContent = isNowSaved ? "Saved ✓" : "Save";
+  }
+});
+
+function renderDrawer() {
+  $("#dl").innerHTML = savedItems.length
+    ? savedItems.map((item, idx) => `<div class="sv">“${E(item.quote)}”<small>${E(item.author)} · ${E(item.work)} <button data-x="${idx}">remove</button></small></div>`).join("")
+    : `<p style="color:var(--mut)">Nothing kept yet.</p>`;
+}
+$("#cb").addEventListener("click", () => { renderDrawer(); $("#dr").classList.add("o"); });
+$("#dc").addEventListener("click", () => $("#dr").classList.remove("o"));
+$("#dl").addEventListener("click", e => {
+  if (e.target.dataset.x != null) {
+    savedItems.splice(+e.target.dataset.x, 1);
+    saveStore();
+    renderDrawer();
+    // Update main view if open
+    document.querySelectorAll(".save-btn").forEach(btn => {
+      const item = JSON.parse(btn.dataset.json);
+      const isNowSaved = savedItems.some(x => x.quote === item.quote);
+      btn.classList.toggle("on", isNowSaved);
+      btn.textContent = isNowSaved ? "Saved ✓" : "Save";
+    });
+  }
+});
+</script>
+</body>
+</html>
