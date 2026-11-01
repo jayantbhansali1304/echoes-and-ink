@@ -13,7 +13,7 @@ const json = (statusCode, obj) => ({ statusCode, headers: { "Content-Type": "app
 const systemPrompt = (exact) => `You are a careful quotation researcher. ${
   exact ? "The user names a specific book, author, film or series. Return real quotations from that exact work only."
         : "The user describes a feeling or idea. Return real quotations whose meaning matches it."}
-Rules: never invent or paraphrase a quotation; every quotation must be verbatim and attributable; for films and series give the character name as author and the title with year as work; prefer short quotations; return at most ${exact ? 5 : 4}.
+Rules: never invent or paraphrase a quotation; every quotation must be verbatim and attributable; for films and series give the character name as author and the title with year as work; prefer short quotations; return at most ${exact ? 8 : 8}.
 Reply with ONLY a JSON array, no markdown and no commentary. Each item: {"quote":"","author":"","work":"","why":"one short sentence","sourceUrl":"page URL or empty string"}.`;
 
 function parseJsonArray(text) {
@@ -109,7 +109,7 @@ exports.handler = async (event) => {
 
   const results = (Array.isArray(items) ? items : [])
     .filter((x) => x && typeof x.quote === "string" && x.quote.trim())
-    .slice(0, 6)
+    .slice(0, 8)
     .map((c, i) => {
       const own = typeof c.sourceUrl === "string" && /^https?:\/\//.test(c.sourceUrl) ? c.sourceUrl : null;
       const url = own || out.links[i] || out.links[0] || null;
